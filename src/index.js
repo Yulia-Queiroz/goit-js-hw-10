@@ -20,10 +20,19 @@ function onCountryInput(evt) {
     return;
   }
 
-  fetchCountries(inputValue).then(country => {
-    checkConditions(country);
-  });
-}
+  fetchCountries(inputValue)
+      .then(country => {
+        
+      checkConditions(country);
+    })
+      .catch(error => {
+          if (error.message === "404") {
+              Notify.failure('Oops, there is no country with that name')
+          }
+          else Notify.failure(error.message);
+      }
+    );
+
 
 function checkConditions(country) {
   if (country.length > 10) {
@@ -31,6 +40,8 @@ function checkConditions(country) {
       'Too many matches found. Please enter a more specific name.'
     );
   } else if (country.length === 1) {
+      countryList.innerHTML = '';
+  countryInfo.innerHTML = '';
     return createCountryMarkup(country);
   }
   return createCountryList(country);
